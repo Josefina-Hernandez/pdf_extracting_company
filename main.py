@@ -380,7 +380,7 @@ def reading(pageNum):
             continue
 
         if if_products_services_first(str(each)):
-            PRODUCT_SERVICES = str(each)
+            PRODUCT_SERVICES = str(each)[3:]
             product_services_flg = True
 
             ifCompanyName = False
@@ -561,7 +561,33 @@ class Excel_Con():
                         'PDFのページ数'
                         ])
 
+    def remove_head_num_com_name(self, companyname):
+        counter = 0
+        for char in str(companyname).strip():
+            counter += 1
+            if char.isdigit():
+                if counter <= 3:
+                    companyname = companyname[1:]
+                else:
+                    companyname = str(companyname).strip()
+                    break
+            else:
+                companyname = str(companyname).strip()
+                break
+
+        return companyname
+
     def writing_data(self, no, data_line):
+        companyname = data_line['companyname']
+        if companyname not in ['10 SEPTEMBER CO., LTD.',
+                               '128 GROUP CO., LTD.',
+                               '304 INDUSTRIAL PARK 2 CO., LTD.',
+                               '304 INDUSTRIAL PARK CO., LTD.',
+                               '3AC (THAILAND) CO., LTD.',
+                               '3D INTERIORS CO., LTD.',
+                               '3M THAILAND LTD.']:
+            data_line['companyname'] = self.remove_head_num_com_name(companyname=companyname)
+
         self.ws.append([
             no,
             data_line['companyname'],
